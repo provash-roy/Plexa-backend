@@ -1,21 +1,20 @@
-import express from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
+import app from "./app.js";
+import connectDB from "./db/index.js";
 
-const app = express();
-
-dotenv.config();
-
+dotenv.config({
+    path: './.env'
+})
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
-});
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server is running at http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("MongoDB connection failed:", err);
+  });
